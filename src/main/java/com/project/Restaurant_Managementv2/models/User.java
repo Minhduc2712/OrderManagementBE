@@ -1,11 +1,13 @@
 package com.project.Restaurant_Managementv2.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.Restaurant_Managementv2.enums.Role;
+import com.project.Restaurant_Managementv2.enums.Roles;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="users", catalog = "RestaurantManagementv2")
@@ -29,11 +31,13 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name ="Role")
-    private Role role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "User_roles",
+            joinColumns = @JoinColumn(name = "UserId"),
+            inverseJoinColumns = @JoinColumn(name = "RodeId"))
+    private Set<Role> roles = new HashSet<>();
 
-    public User(){
+    public User(String firstName, String lastName, String username, String encryptedPassword, Roles user, String email){
 
     }
 
@@ -42,7 +46,7 @@ public class User implements Serializable {
         this.firstName = firstName;
         this.username = username;
         this.password = password;
-        this.role= role;
+        this.roles= roles;
         this.email=email;
     }
 
@@ -86,12 +90,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Order> getOrders() {

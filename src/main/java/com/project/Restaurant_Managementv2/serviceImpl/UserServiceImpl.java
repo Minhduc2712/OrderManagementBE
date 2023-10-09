@@ -3,11 +3,12 @@ package com.project.Restaurant_Managementv2.serviceImpl;
 import com.project.Restaurant_Managementv2.dto.ResponseDto;
 import com.project.Restaurant_Managementv2.dto.user.SignInDto;
 import com.project.Restaurant_Managementv2.dto.user.SignInResponseDto;
-import com.project.Restaurant_Managementv2.enums.Role;
+import com.project.Restaurant_Managementv2.enums.Roles;
 import com.project.Restaurant_Managementv2.exceptions.AuthenticationFailException;
 import com.project.Restaurant_Managementv2.exceptions.CustomException;
 import com.project.Restaurant_Managementv2.form.UserFormForCreating;
 import com.project.Restaurant_Managementv2.models.AuthenticationToken;
+import com.project.Restaurant_Managementv2.models.Role;
 import com.project.Restaurant_Managementv2.models.User;
 import com.project.Restaurant_Managementv2.repository.UserRepository;
 import com.project.Restaurant_Managementv2.service.AuthenticationService;
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
             logger.error("hashing password failed {}", e.getMessage());
         }
 
-        User customer = new User(customerNewForm.getFirstName(),customerNewForm.getLastName(), customerNewForm.getUsername(),encryptedPassword,Role.user, customerNewForm.getEmail());
+        User customer = new User(customerNewForm.getFirstName(),customerNewForm.getLastName(), customerNewForm.getUsername(),encryptedPassword, Roles.user, customerNewForm.getEmail());
 
         User createdUser;
         try{

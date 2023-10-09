@@ -20,25 +20,6 @@ public class UserController {
     @Autowired
     private AuthenticationService authenticationService;
 
-//    @PostMapping
-//    public ResponseEntity<ResponseObject> creteNewAccount(@RequestBody CustomerFormForCreating customerNewForm){
-//        try {
-//            Customer customerNew= customerService.createNewAccount(customerNewForm);
-//
-//            CustomerDto customerNewDto = new CustomerDto();
-//            customerNewDto.setId(customerNew.getId());
-//            customerNewDto.setFirstName(customerNew.getFirstName());
-//            customerNewDto.setLastName(customerNew.getLastName());
-//            customerNewDto.setUsername(customerNew.getUsername());
-//            customerNewDto.setPassword(customerNew.getPassword());
-//
-//            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok","Created product successfully",customerNewDto));
-//
-//        }
-//        catch(Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("failed","Cannot create new product",""));
-//        }
-//    }
 
     @PostMapping("/signup")
     public ResponseDto Signup(@RequestBody UserFormForCreating userNewForm){
