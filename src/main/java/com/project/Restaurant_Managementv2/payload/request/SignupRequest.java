@@ -1,8 +1,8 @@
-package com.project.Restaurant_Managementv2.form;
+package com.project.Restaurant_Managementv2.payload.request;
 
 import java.util.Set;
 
-public class UserFormForCreating {
+public class SignupRequest {
     private String lastName;
     private String firstName;
     private String username;
@@ -11,7 +11,7 @@ public class UserFormForCreating {
 
     private Set<String> role;
 
-    public UserFormForCreating(){
+    public SignupRequest(){
         super();
     }
 

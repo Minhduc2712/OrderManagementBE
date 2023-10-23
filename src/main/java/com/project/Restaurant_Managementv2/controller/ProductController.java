@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -133,4 +134,12 @@ public class ProductController {
         return productService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
+    @GetMapping("product/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam("query") String query) {
+        List<Product> results = productService.searchProducts(query);
+        if (results.isEmpty()) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+        return ResponseEntity.ok(results);
+    }
 }

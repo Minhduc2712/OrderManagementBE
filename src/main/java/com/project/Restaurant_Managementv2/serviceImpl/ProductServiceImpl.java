@@ -48,6 +48,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByNameContaining(keyword);
+    }
+
+
+    @Override
     public Product getProductById(short id) {
         return productRepository.getById(id);
     }

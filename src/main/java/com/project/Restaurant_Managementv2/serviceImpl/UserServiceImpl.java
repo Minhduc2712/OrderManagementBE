@@ -33,72 +33,15 @@ public class UserServiceImpl implements UserService {
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
+//    String hashPassword(String password) throws NoSuchAlgorithmException{
+//        MessageDigest md = MessageDigest.getInstance("SHA512");
+//        byte[] hashedBytes=md.digest(password.getBytes());
+//        String hashedPassword = Base64.getEncoder().encodeToString(hashedBytes);
+//        return hashedPassword;
+//    }
 
     @Override
-    public User getUserByEmailOrUsername(String email, String username) {
-        return userRepository.findByEmailOrUsername(email,username);
+    public User getUserById(short id) {
+        return userRepository.getById(id);
     }
-
-    @Override
-    public ResponseDto signUp(UserFormForCreating customerNewForm) throws CustomException {
-        if (Helper.notNull(userRepository.findByEmailOrUsername(customerNewForm.getEmail(), customerNewForm.getUsername()))) {
-            return new ResponseDto("failed","User already exits","");
-        }
-        String encryptedPassword = customerNewForm.getPassword();
-        try {
-            encryptedPassword = hashPassword(customerNewForm.getPassword());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            logger.error("hashing password failed {}", e.getMessage());
-        }
-
-        User customer = new User(customerNewForm.getFirstName(),customerNewForm.getLastName(), customerNewForm.getUsername(),encryptedPassword, Roles.user, customerNewForm.getEmail());
-
-        User createdUser;
-        try{
-            createdUser = userRepository.save(customer);
-            final AuthenticationToken authenticationToken = new AuthenticationToken(createdUser);
-            authenticationService.saveComfirmationToken(authenticationToken);
-            return new ResponseDto("Success","Register Successfully",createdUser);
-        } catch (Exception e) {
-            throw new CustomException(e.getMessage());
-        }
-
-    }
-
-    @Override
-    public SignInResponseDto signIn(SignInDto signInDto) {
-        User user =userRepository.findByEmailOrUsername(signInDto.getEmail(),signInDto.getUsername());
-        if (!Helper.notNull(user)){
-            throw new AuthenticationFailException("User not present");
-        }
-        try{
-            if(!user.getPassword().equals(hashPassword(signInDto.getPassword()))){
-                throw new AuthenticationFailException("Wrong password");
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            logger.error("hashing password failed {}", e.getMessage());
-            throw new CustomException(e.getMessage());
-        }
-
-        AuthenticationToken token = authenticationService.getToken(user);
-
-        if(!Helper.notNull(token)) {
-            throw new CustomException("Token not present");
-        }
-
-        return new SignInResponseDto ("success", token.getToken(),user);
-    }
-
-
-    String hashPassword(String password) throws NoSuchAlgorithmException{
-        MessageDigest md = MessageDigest.getInstance("SHA512");
-        byte[] hashedBytes=md.digest(password.getBytes());
-        String hashedPassword = Base64.getEncoder().encodeToString(hashedBytes);
-        return hashedPassword;
-    }
-
-
-
 }

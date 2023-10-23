@@ -2,43 +2,54 @@ package com.project.Restaurant_Managementv2.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="carts", catalog="RestaurantManagementv2")
 public class Cart implements Serializable {
     @Id
-    @Column(name="CartId", unique= true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CartId", nullable = false)
     private short id;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="Created_Date")
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
     @JoinColumn(name="ProductId")
     private Product product;
-    @JsonIgnore
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "UserId", nullable = false)
-    private User user;
+
+    private short userId;
 
     private int quantity;
+
+    private double price;
+
+//    private double totalAmount;
 
     public Cart(){
 
     }
 
-    public Cart(Product product, User user, int quantity) {
+//    public Cart(Product product, short userId, int quantity, double price, double totalAmount) {
+//        this.product = product;
+//        this.userId = userId;
+//        this.quantity = quantity;
+//        this.price = price;
+//        this.totalAmount = totalAmount;
+//    }
+
+
+    public Cart(LocalDateTime createdDate, Product product, short userId, int quantity, double price) {
+        this.createdDate = createdDate;
         this.product = product;
-        this.user = user;
+        this.userId = userId;
         this.quantity = quantity;
-        this.createdDate = new Date();
+        this.price = price;
     }
 
     public short getId() {
@@ -49,19 +60,19 @@ public class Cart implements Serializable {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public short getUser() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(short userId) {
+        this.userId = userId;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -80,4 +91,27 @@ public class Cart implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+//    public double getTotalAmount() {
+//        return totalAmount;
+//    }
+//
+//    public void setTotalAmount(double totalAmount) {
+//        this.totalAmount = totalAmount;
+//    }
+
+    @PrePersist
+    private void prePersist() {
+        createdDate = LocalDateTime.now();
+    }
+
+
 }

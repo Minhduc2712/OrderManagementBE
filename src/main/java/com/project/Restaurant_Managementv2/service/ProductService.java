@@ -14,6 +14,8 @@ public interface ProductService {
 
     public List<Product> getAllProducts();
 
+    public List<Product> searchProducts(String keyword);
+
     public Product getProductById(short id);
 
     public Product updateProduct(short id, ProductFormForUpdating productUpdateForm);
