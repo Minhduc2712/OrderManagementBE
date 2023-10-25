@@ -1,5 +1,7 @@
 package com.project.Restaurant_Managementv2.controller;
 
+import com.project.Restaurant_Managementv2.dto.cart.AddtoCartDto;
+import com.project.Restaurant_Managementv2.dto.cart.CartDto;
 import com.project.Restaurant_Managementv2.models.Cart;
 import com.project.Restaurant_Managementv2.models.ResponseObject;
 import com.project.Restaurant_Managementv2.security.jwt.ShoppingConfiguration;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +38,25 @@ public class CartController {
             int qty =  Integer.parseInt(addCartRequest.get("qty"));
             double price = Double.parseDouble(addCartRequest.get("price"));
             List<Cart> obj = cartService.addCartByUserIdAndProductId((short) productId, (short) userId,qty,price);
+            List<AddtoCartDto> cartDtoList = new ArrayList<>();
+            for(Cart cart : obj){
+                AddtoCartDto cartDto = new AddtoCartDto();
+                cartDto.setId(cart.getId());
+                cartDto.setCreatedDate(cart.getCreatedDate());
+                cartDto.setQuantity(cart.getQuantity());
+                cartDto.setPrice(cart.getPrice());
+                cartDto.setUserId(cart.getUser());
+                cartDto.setProductId(cart.getProduct().getId());
+
+                cartDtoList.add(cartDto);
+
+            }
             Double totalAmount = cartService.getTotalAmountForUser(userId);
             Integer totalQuantity = cartService.getTotalQuantityForUser(userId);
             DecimalFormat decimalFormat = new DecimalFormat("#.00");
             String formattedTotalAmount = decimalFormat.format(totalAmount);
             Map<String, Object> response = new HashMap<>();
-            response.put("cart", obj);
+            response.put("cart", cartDtoList);
             response.put("totalAmount", totalAmount);
             response.put("totalQuantity", totalQuantity);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Ok", "add ok", response));
@@ -63,10 +79,23 @@ public class CartController {
             double price = Double.parseDouble(addCartRequest.get("price"));
             cartService.updatequantityByCartId(cartId, qty, price);
             List<Cart> obj = cartService.getCartByUserId(userId);
+            List<AddtoCartDto> cartDtoList = new ArrayList<>();
+            for(Cart cart : obj){
+                AddtoCartDto cartDto = new AddtoCartDto();
+                cartDto.setId(cart.getId());
+                cartDto.setCreatedDate(cart.getCreatedDate());
+                cartDto.setQuantity(cart.getQuantity());
+                cartDto.setPrice(cart.getPrice());
+                cartDto.setUserId(cart.getUser());
+                cartDto.setProductId(cart.getProduct().getId());
+
+                cartDtoList.add(cartDto);
+
+            }
             Double totalAmount = cartService.getTotalAmountForUser(userId);
             Integer totalQuantity = cartService.getTotalQuantityForUser(userId);
             Map<String, Object> response = new HashMap<>();
-            response.put("cart", obj);
+            response.put("cart", cartDtoList);
             response.put("totalAmount", totalAmount);
             response.put("totalQuantity", totalQuantity);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","update ok",response ));
@@ -103,10 +132,23 @@ public class CartController {
 //            short userId = Short.parseShort(getCartRequest.get("userId"));
 
             List<Cart> obj = cartService.getCartByUserId(id);
+            List<AddtoCartDto> cartDtoList = new ArrayList<>();
+            for(Cart cart : obj){
+                AddtoCartDto cartDto = new AddtoCartDto();
+                cartDto.setId(cart.getId());
+                cartDto.setCreatedDate(cart.getCreatedDate());
+                cartDto.setQuantity(cart.getQuantity());
+                cartDto.setPrice(cart.getPrice());
+                cartDto.setUserId(cart.getUser());
+                cartDto.setProductId(cart.getProduct().getId());
+
+                cartDtoList.add(cartDto);
+
+            }
             Double totalAmount = cartService.getTotalAmountForUser(id);
             Integer totalQuantity = cartService.getTotalQuantityForUser(id);
             Map<String, Object> response = new HashMap<>();
-            response.put("cart", obj);
+            response.put("cart", cartDtoList);
             response.put("totalAmount", totalAmount);
             response.put("totalQuantity", totalQuantity);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "get ok", response));

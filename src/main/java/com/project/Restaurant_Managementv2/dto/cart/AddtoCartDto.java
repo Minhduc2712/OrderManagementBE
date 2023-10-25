@@ -1,28 +1,45 @@
 package com.project.Restaurant_Managementv2.dto.cart;
 
+import java.time.LocalDateTime;
+
 public class AddtoCartDto {
-    private Integer id;
-    private Integer productId;
+    private short id;
+
+    private LocalDateTime createdDate;
+
+    private double price;
+
     private Integer quantity;
+
+    private short userId;
+    private short productId;
 
     public AddtoCartDto(){
 
     }
 
-    public Integer getId() {
+    public short getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(short id) {
         this.id = id;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public Integer getQuantity() {
@@ -33,12 +50,19 @@ public class AddtoCartDto {
         this.quantity = quantity;
     }
 
-    @Override
-    public String toString() {
-        return "AddtoCartDto{" +
-                "id=" + id +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
+    public short getUserId() {
+        return userId;
+    }
+
+    public void setUserId(short userId) {
+        this.userId = userId;
+    }
+
+    public short getProductId() {
+        return productId;
+    }
+
+    public void setProductId(short productId) {
+        this.productId = productId;
     }
 }

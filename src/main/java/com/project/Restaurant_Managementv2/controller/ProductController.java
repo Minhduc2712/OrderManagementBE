@@ -105,7 +105,7 @@ public class ProductController {
     }
 
     @DeleteMapping("product/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable(name = "id") short id) {
+    public ResponseEntity<ResponseObject> deleteProductById(@PathVariable(name = "id") short id) {
 
     Product productDelete = productService.getProductById(id);
 
@@ -119,8 +119,28 @@ public class ProductController {
     productDeleteDto.setCategoryName(productDelete.getCategory().getName());
 
     productService.deleteProductById(id);
+        try{
+            List<Product> productListDB = productService.getAllProducts();
+            List<ProductDto> productListDto = new ArrayList<>();
 
-    return new ResponseEntity<>(productDeleteDto,HttpStatus.OK);
+            for (Product productDB : productListDB) {
+                ProductDto productDto = new ProductDto();
+                productDto.setId(productDB.getId());
+                productDto.setName(productDB.getName());
+                productDto.setCountry(productDB.getCountry());
+                productDto.setImg(productDB.getImg());
+                productDto.setPrice(productDB.getPrice());
+                productDto.setRate(productDB.getRate());
+                productDto.setCategoryName(productDB.getCategory().getName());
+
+                productListDto.add(productDto);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","Query product successfully",productListDto));
+        }
+        catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("failed","Cannot find product",""));
+        }
+
 
     }
     @GetMapping("product")

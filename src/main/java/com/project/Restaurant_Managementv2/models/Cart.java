@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Table(name="carts", catalog="RestaurantManagementv2")
 public class Cart implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CartId", nullable = false)
     private short id;
 
@@ -19,7 +18,7 @@ public class Cart implements Serializable {
     private LocalDateTime createdDate;
 
     @JsonIgnore
-    @ManyToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="ProductId")
     private Product product;
 

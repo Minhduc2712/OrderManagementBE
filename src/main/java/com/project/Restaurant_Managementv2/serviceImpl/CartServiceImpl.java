@@ -70,6 +70,7 @@ public class CartServiceImpl implements CartService {
             newCart.setQuantity(qty);
             newCart.setUser(userId);
             Product product = productServices.getProductById(productId);
+            newCart.setId(productId);
             newCart.setProduct(product);
             newCart.setPrice(price);
             cartRepository.save(newCart);

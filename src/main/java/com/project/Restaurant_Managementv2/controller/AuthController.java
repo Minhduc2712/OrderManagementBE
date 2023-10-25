@@ -93,10 +93,10 @@ public class AuthController {
                 signUpRequest.getEmail());
 
         // Set the default role to "user"
-        Role userRole = roleRepository.findByName(Roles.user)
+        Role adminRole = roleRepository.findByName(Roles.admin)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
+        roles.add(adminRole);
         user.setRoles(roles);
 
         userRepository.save(user);

@@ -1,13 +1,12 @@
 package com.project.Restaurant_Managementv2.dto.cart;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class CartDto {
     private List<CartItemDto> cartItems;
     private Double totalCost;
 
-    public CartDto(List<CartItemDto> cartItems, Double totalCost) {
+    public CartDto() {
         this.cartItems = cartItems;
         this.totalCost = totalCost;
     }
