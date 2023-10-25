@@ -39,7 +39,27 @@ public class ProductController {
             productNewDto.setRate(productNew.getRate());
             productNewDto.setCategoryName(productNew.getCategory().getName());
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok","Created product successfully",productNewDto));
+            try{
+                List<Product> productListDB = productService.getAllProducts();
+                List<ProductDto> productListDto = new ArrayList<>();
+
+                for (Product productDB : productListDB) {
+                    ProductDto productDto = new ProductDto();
+                    productDto.setId(productDB.getId());
+                    productDto.setName(productDB.getName());
+                    productDto.setCountry(productDB.getCountry());
+                    productDto.setImg(productDB.getImg());
+                    productDto.setPrice(productDB.getPrice());
+                    productDto.setRate(productDB.getRate());
+                    productDto.setCategoryName(productDB.getCategory().getName());
+
+                    productListDto.add(productDto);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","Created product successfully",productListDto));
+            }
+            catch(Exception e){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("failed","Cannot create new product",""));
+            }
         }
         catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("failed","Cannot create new product",""));
