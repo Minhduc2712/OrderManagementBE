@@ -27,6 +27,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,7 +63,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+//        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         List<String> roles = userDetails.getAuthorities().stream()
@@ -120,6 +121,18 @@ public class AuthController {
 
         // Ở đây, bạn có thể lấy thông tin người dùng và gửi nó dưới dạng ResponseObject
         return ResponseEntity.ok(new ResponseObject("ok", "User found", user));
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('admin')")
+    public String adminAccess() {
+        return "User Content.";
+    }
+
+    @GetMapping("/testuser")
+    @PreAuthorize("hasRole('admin') or hasRole('user')")
+    public String userAccess() {
+        return "User Content.";
     }
 
 }

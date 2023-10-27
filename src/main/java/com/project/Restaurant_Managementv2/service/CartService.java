@@ -11,9 +11,12 @@ import java.util.List;
 public interface CartService {
         List<Cart> getAggregatedCartByUserId(Short userId);
         List<Cart> addCartByUserIdAndProductId(short productId, Short userId, int qty, double price) throws Exception;
-        void updatequantityByCartId(short cartId,int quantity,double price) throws Exception;
+
+        List<Cart> removeProductFromCartByUserIdAndProductId(short cartId, short productId, short userId, double price ) throws Exception;
+
+        void updatequantityByCartId(short cartId, int quantity, double price) throws Exception;
         List<Cart> getCartByUserId(short userId);
-        List<Cart> removeCartByUserId(short cartId,Short userId);
+        List<Cart> removeCartByUserId(short cartId,short userId);
         List<Cart> removeAllCartByUserId(short userId);
         Boolean checkTotalAmountAgainstCart(double totalAmount,short userId);
         List<CheckoutCart> getAllCheckoutByUserId(short userId);

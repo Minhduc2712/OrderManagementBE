@@ -78,6 +78,32 @@ public class CartServiceImpl implements CartService {
 
         return this.getAggregatedCartByUserId(userId);
     }
+
+    @Override
+    public List<Cart> removeProductFromCartByUserIdAndProductId(short cartId, short productId, short userId, double price) throws Exception {
+        List<Cart> userCarts = cartRepository.getCartByUserId(userId);
+
+        Optional<Cart> existingCartItem = userCarts.stream()
+                .filter(cart -> cart.getProduct().getId() == productId)
+                .findFirst();
+
+        if (existingCartItem.isPresent()) {
+            Cart cart = existingCartItem.get();
+            if (cart.getQuantity() > 1) {
+                int newQty = cart.getQuantity() - 1;
+                double newPrice = calculateNewPrice(price, newQty, cart.getProduct().getPrice());
+                cart.setQuantity(newQty);
+                cart.setPrice(newPrice);
+                cartRepository.save(cart);
+            } else {
+                return this.removeCartByUserId(cartId,userId);
+            }
+        }
+
+        return this.getAggregatedCartByUserId(userId);
+    }
+
+
     private double calculateNewPrice(double newPrice, int newQty, double productPrice) {
         return newPrice * newQty;
     }
@@ -94,7 +120,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> removeCartByUserId(short cartId, Short userId) {
+    public List<Cart> removeCartByUserId(short cartId, short userId) {
         cartRepository.deleteCartByIdAndUserId(userId,cartId);
         return this.getCartByUserId(userId);
     }

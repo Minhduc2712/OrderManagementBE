@@ -66,6 +66,46 @@ public class CartController {
         }
     }
 
+    @PostMapping("cart/decrementProduct")
+    public ResponseEntity<ResponseObject> removeProductFromCartByUserIdAndProductId(@RequestBody HashMap<String,String> addCartRequest) {
+        try {
+            String keys[] = {"cartId","productId","userId","price"};
+            if(ShoppingConfiguration.validationWithHashMap(keys, addCartRequest)) {}
+
+            short cartId = Short.parseShort(addCartRequest.get("cartId"));
+            short productId = Short.parseShort(addCartRequest.get("productId"));
+            short userId =  Short.parseShort(addCartRequest.get("userId"));
+            double price = Double.parseDouble(addCartRequest.get("price"));
+
+
+            List<Cart> obj = cartService.removeProductFromCartByUserIdAndProductId(cartId, productId, userId, price);
+                List<AddtoCartDto> cartDtoList = new ArrayList<>();
+                for (Cart cart : obj) {
+                    AddtoCartDto cartDto = new AddtoCartDto();
+                    cartDto.setId(cart.getId());
+                    cartDto.setCreatedDate(cart.getCreatedDate());
+                    cartDto.setQuantity(cart.getQuantity());
+                    cartDto.setPrice(cart.getPrice());
+                    cartDto.setUserId(cart.getUser());
+                    cartDto.setProductId(cart.getProduct().getId());
+                    cartDtoList.add(cartDto);
+                }
+            Double totalAmount = cartService.getTotalAmountForUser(userId);
+            Integer totalQuantity = cartService.getTotalQuantityForUser(userId);
+                Map<String, Object> response = new HashMap<>();
+                response.put("cart", cartDtoList);
+                response.put("totalAmount",totalAmount);
+                response.put("totalQuantity", totalQuantity);
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Ok", "add ok", response));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new ResponseObject("failed", "add failed", ""));
+        }
+    }
+
+
     @PostMapping("cart/updateQtyForCart")
     public ResponseEntity<ResponseObject> updateQtyForCart(@RequestBody HashMap<String,String> addCartRequest) {
         try {
@@ -117,7 +157,26 @@ public class CartController {
             short cartId = Short.parseShort(removeCartRequest.get("cartId"));
             short userId = Short.parseShort(removeCartRequest.get("userId"));
             List<Cart> obj = cartService.removeCartByUserId(cartId, userId);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","delete ok", obj));
+            List<AddtoCartDto> cartDtoList = new ArrayList<>();
+            for(Cart cart : obj){
+                AddtoCartDto cartDto = new AddtoCartDto();
+                cartDto.setId(cart.getId());
+                cartDto.setCreatedDate(cart.getCreatedDate());
+                cartDto.setQuantity(cart.getQuantity());
+                cartDto.setPrice(cart.getPrice());
+                cartDto.setUserId(cart.getUser());
+                cartDto.setProductId(cart.getProduct().getId());
+
+                cartDtoList.add(cartDto);
+
+            }
+            Double totalAmount = cartService.getTotalAmountForUser(userId);
+            Integer totalQuantity = cartService.getTotalQuantityForUser(userId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("cart", cartDtoList);
+            response.put("totalAmount", totalAmount);
+            response.put("totalQuantity", totalQuantity);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","delete ok", response));
         }catch(Exception e) {
             return ResponseEntity.badRequest().body(new ResponseObject(e.getMessage(), "",""));
         }
