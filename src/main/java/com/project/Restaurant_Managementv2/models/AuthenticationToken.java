@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="tokens",catalog="RestaurantManagementv2" )
+@Table(name="tokens",catalog="railway" )
 public class AuthenticationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

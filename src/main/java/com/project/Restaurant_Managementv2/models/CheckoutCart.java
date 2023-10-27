@@ -4,7 +4,7 @@ package com.project.Restaurant_Managementv2.models;
         import jakarta.persistence.*;
 
 @Entity
-@Table(name="CheckoutCart", catalog="RestaurantManagementv2")
+@Table(name="CheckoutCart", catalog="railway")
 public class CheckoutCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

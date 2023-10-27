@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name="Menu", catalog = "RestaurantManagementv2")
+@Table(name="Menu", catalog = "railway")
 public class Product implements Serializable {
     @Column(name = "ProductId", unique = true, nullable = false)
     @Id
@@ -34,9 +34,6 @@ public class Product implements Serializable {
     @JoinColumn(name = "CategoryId")
     private Category category;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
-    private List<WishList> wishListList;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="carts", catalog="RestaurantManagementv2")
+@Table(name="carts", catalog="railway")
 public class Cart implements Serializable {
     @Id
     @Column(name = "CartId", nullable = false)

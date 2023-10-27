@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="users", catalog = "RestaurantManagementv2")
+@Table(name="users", catalog = "railway")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +27,7 @@ public class User implements Serializable {
 
     @Column(name="Email", length = 50)
     private String email;
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Order> orders;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "User_roles",
@@ -101,13 +99,7 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
 
     public String getEmail() {
         return email;

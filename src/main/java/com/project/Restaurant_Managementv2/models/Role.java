@@ -3,7 +3,7 @@ import com.project.Restaurant_Managementv2.enums.Roles;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="roles", catalog = "RestaurantManagementv2")
+@Table(name="roles", catalog = "railway")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

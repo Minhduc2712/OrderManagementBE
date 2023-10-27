@@ -7,7 +7,7 @@ import org.hibernate.annotations.Cascade;
 import java.util.List;
 
 @Entity
-@Table(name= "Category", catalog="RestaurantManagementv2")
+@Table(name= "Category", catalog="railway")
 public class Category {
     @Column(name="CategoryId")
     @Id
