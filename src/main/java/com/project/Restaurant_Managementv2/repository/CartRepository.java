@@ -30,9 +30,11 @@ public interface CartRepository extends JpaRepository<Cart, Short> {
     @Query("UPDATE Cart cart SET cart.quantity = :qty, cart.price = :price WHERE cart.id = :cart_id")
     void updateQtyByCartId(@Param("cart_id") Short cart_id, @Param("price") double price, @Param("qty") Integer qty);
 
-    @Query("SELECT SUM(c.price) FROM Cart c WHERE c.userId = :user_id")
+    @Query("SELECT COALESCE(SUM(c.price), 0) FROM Cart c WHERE c.userId = :user_id")
     Double getTotalAmountForUser(@Param("user_id") short user_id);
-    @Query("SELECT SUM(c.quantity) FROM Cart c WHERE c.userId = :user_id")
+
+    @Query("SELECT COALESCE(SUM(c.quantity), 0) FROM Cart c WHERE c.userId = :user_id")
     Integer getTotalQuantityForUser(@Param("user_id") short user_id);
+
 
 }
