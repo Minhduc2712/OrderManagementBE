@@ -1,5 +1,7 @@
 package com.project.Restaurant_Managementv2.payload.response;
 
+import org.springframework.http.ResponseCookie;
+
 import java.util.List;
 
 public class UserInfoResponse {
@@ -12,7 +14,7 @@ public class UserInfoResponse {
     private String email;
     private List<String> roles;
 
-    public UserInfoResponse(String token, Short id, String username, String email, List<String> roles) {
+    public UserInfoResponse(String token, ResponseCookie jwtCookie, Short id, String username, String email, List<String> roles) {
         this.token = token;
         this.id = id;
         this.username = username;

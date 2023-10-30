@@ -108,6 +108,28 @@ public class ProductController {
         return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
+    @GetMapping("product/category/{id}")
+    public ResponseEntity<?> getProductByCategoryId(@PathVariable(name="id") short id){
+        List<Product> productListDB = productService.getProductByCategoryId(id);
+        List<ProductDto> productListDto = new ArrayList<>();
+
+        for (Product productDB : productListDB) {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(productDB.getId());
+            productDto.setName(productDB.getName());
+            productDto.setCountry(productDB.getCountry());
+            productDto.setImg(productDB.getImg());
+            productDto.setPrice(productDB.getPrice());
+            productDto.setRate(productDB.getRate());
+            productDto.setCategoryName(productDB.getCategory().getName());
+
+            productListDto.add(productDto);
+        }
+
+
+        return new ResponseEntity<>(productListDto, HttpStatus.OK);
+    }
+
     @PutMapping("product/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable(name = "id") short id, @RequestBody ProductFormForUpdating productUpdateForm) {
         Product productUpdate = productService.updateProduct(id, productUpdateForm);
@@ -169,10 +191,22 @@ public class ProductController {
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+
     ){
 
         return productService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
+
+//    @GetMapping("/product/{id}")
+//    public ResponseEntity<PaginationSortingResponse> getAllProductsByCategoryId(
+//            @PathVariable Short id,
+//            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+//            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+//            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
+//            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+//        PaginationSortingResponse response = productService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
+//        return ResponseEntity.ok(response);
+//    }
 
     @GetMapping("product/search")
     public ResponseEntity<List<Product>> searchProducts(@RequestParam("query") String query) {
@@ -182,4 +216,6 @@ public class ProductController {
         }
         return ResponseEntity.ok(results);
     }
+
+
 }

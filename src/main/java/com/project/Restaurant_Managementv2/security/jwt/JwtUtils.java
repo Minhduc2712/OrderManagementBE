@@ -17,7 +17,9 @@ import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtils {
@@ -26,7 +28,7 @@ public class JwtUtils {
     @Value("${OrderManagement.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${OrderManagement.app,jwtExpirationMs}")
+    @Value("${OrderManagement.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     @Value("${OrderManagement.app.jwtCookieName}")
@@ -41,11 +43,11 @@ public class JwtUtils {
         }
     }
 
-//    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-//        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-//        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api/v1").maxAge(24 * 60 * 60).httpOnly(true).build();
-//        return cookie;
-//    }
+    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api/v1").maxAge(24 * 60 * 60).httpOnly(true).build();
+        return cookie;
+    }
 
     public ResponseCookie getCleanJwtCookie() {
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api/v1").build();
@@ -61,17 +63,21 @@ public class JwtUtils {
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS512))
+                .signWith(key(),SignatureAlgorithm.HS256)
                 .compact();
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public List<String> getRolesFromJwtToken(String token){
+        return Collections.singletonList(Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -90,5 +96,14 @@ public class JwtUtils {
 
         return false;
     }
+    public String generateTokenFromUsername(String username) {
 
+        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 }

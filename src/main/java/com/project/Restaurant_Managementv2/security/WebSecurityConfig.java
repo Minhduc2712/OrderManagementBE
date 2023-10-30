@@ -19,8 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity
-(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
     @Autowired
@@ -64,6 +63,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/v1/test/**").permitAll()
                                 .requestMatchers("/api/v1/product/**").permitAll()
                                 .requestMatchers("/api/v1/categories/**").permitAll()
+                                .requestMatchers("/api/v1/product/category/**").permitAll()
                                 .requestMatchers("/api/v1/**").permitAll()
                                 .anyRequest().authenticated()
                 );

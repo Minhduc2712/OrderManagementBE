@@ -56,27 +56,27 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<ResponseObject> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        UserInfoResponse userInfoResponse = new UserInfoResponse(jwt,
+        UserInfoResponse userInfoResponse = new UserInfoResponse(jwt,jwtCookie,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles);
 
-        return ResponseEntity.ok(new ResponseObject("ok","Login ok",userInfoResponse));
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new ResponseObject("ok", "Login ok", userInfoResponse));
     }
 
     @PostMapping("/signup")
@@ -94,7 +94,7 @@ public class AuthController {
                 signUpRequest.getEmail());
 
         // Set the default role to "user"
-        Role adminRole = roleRepository.findByName(Roles.admin)
+        Role adminRole = roleRepository.findByName(Roles.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         Set<Role> roles = new HashSet<>();
         roles.add(adminRole);
@@ -123,16 +123,5 @@ public class AuthController {
         return ResponseEntity.ok(new ResponseObject("ok", "User found", user));
     }
 
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('admin')")
-    public String adminAccess() {
-        return "User Content.";
-    }
-
-    @GetMapping("/testuser")
-    @PreAuthorize("hasRole('admin') or hasRole('user')")
-    public String userAccess() {
-        return "User Content.";
-    }
 
 }

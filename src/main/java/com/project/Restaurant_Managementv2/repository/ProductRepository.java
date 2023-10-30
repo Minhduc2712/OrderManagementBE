@@ -13,4 +13,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product,Short> {
     List<Product> findByNameContaining(String keyword);
 
+    List<Product> findByCategoryId(short categoryId);
+
 }

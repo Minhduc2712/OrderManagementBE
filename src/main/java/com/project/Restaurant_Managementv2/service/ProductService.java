@@ -18,6 +18,8 @@ public interface ProductService {
 
     public Product getProductById(short id);
 
+    public List<Product> getProductByCategoryId(short id);
+
     public Product updateProduct(short id, ProductFormForUpdating productUpdateForm);
 
     public void deleteProductById(short id);

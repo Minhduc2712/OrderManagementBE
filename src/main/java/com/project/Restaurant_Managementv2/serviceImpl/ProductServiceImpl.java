@@ -59,6 +59,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getProductByCategoryId(short id) {
+        List<Product> products = productRepository.findByCategoryId(id);
+
+
+        return products;
+    }
+
+    @Override
     public Product updateProduct(short id, ProductFormForUpdating productUpdateForm) {
         Product product = productRepository.getById(id);
 
