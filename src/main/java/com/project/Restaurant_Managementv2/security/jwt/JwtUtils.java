@@ -20,6 +20,7 @@ import java.security.Key;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -55,17 +56,21 @@ public class JwtUtils {
     }
 
     public String generateJwtToken(Authentication authentication) {
-
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
+        List<String> roles = userPrincipal.getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toList());
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(userPrincipal.getUsername())
+                .claim("roles", roles)  // Thêm roles vào JWT
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(),SignatureAlgorithm.HS512)
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     private Key key() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -97,7 +102,6 @@ public class JwtUtils {
         return false;
     }
     public String generateTokenFromUsername(String username) {
-
 
         return Jwts.builder()
                 .setSubject(username)
