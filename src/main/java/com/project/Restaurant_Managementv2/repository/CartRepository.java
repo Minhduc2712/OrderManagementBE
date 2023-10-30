@@ -1,6 +1,7 @@
 package com.project.Restaurant_Managementv2.repository;
 
 import com.project.Restaurant_Managementv2.models.Cart;
+import com.project.Restaurant_Managementv2.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,5 +37,6 @@ public interface CartRepository extends JpaRepository<Cart, Short> {
     @Query("SELECT COALESCE(SUM(c.quantity), 0) FROM Cart c WHERE c.userId = :user_id")
     Integer getTotalQuantityForUser(@Param("user_id") short user_id);
 
-
+    @Query("SELECT cart FROM Cart cart WHERE cart.product = :product")
+    List<Cart> findByProduct(Product product);
 }

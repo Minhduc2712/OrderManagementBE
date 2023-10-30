@@ -3,9 +3,11 @@ package com.project.Restaurant_Managementv2.serviceImpl;
 import com.project.Restaurant_Managementv2.dto.product.ProductDto;
 import com.project.Restaurant_Managementv2.form.ProductFormForCreating;
 import com.project.Restaurant_Managementv2.form.ProductFormForUpdating;
+import com.project.Restaurant_Managementv2.models.Cart;
 import com.project.Restaurant_Managementv2.models.Category;
 import com.project.Restaurant_Managementv2.models.PaginationSortingResponse;
 import com.project.Restaurant_Managementv2.models.Product;
+import com.project.Restaurant_Managementv2.repository.CartRepository;
 import com.project.Restaurant_Managementv2.repository.CategoryRepository;
 import com.project.Restaurant_Managementv2.repository.ProductRepository;
 import com.project.Restaurant_Managementv2.service.ProductService;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +28,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Override
     public Product createNewProduct(ProductFormForCreating productNewForm) {
@@ -83,9 +89,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProductById(short id) {
-        productRepository.deleteById(id);
+    public void deleteProductById(short productId) {
+        // Tìm sản phẩm cần xóa
+        Optional<Product> productOptional = productRepository.findById(productId);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+
+            // Tìm danh sách các giỏ hàng có sản phẩm này
+            List<Cart> cartsToUpdate = cartRepository.findByProduct(product);
+
+            for (Cart cart : cartsToUpdate) {
+                cart.setProduct(null); // Cập nhật trường ProductId về null hoặc giá trị khác tùy theo yêu cầu
+            }
+
+            // Xóa sản phẩm từ bảng "Menu"
+            productRepository.delete(product);
+        }
     }
+
 
     @Override
     public PaginationSortingResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {

@@ -57,13 +57,13 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
 
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(),SignatureAlgorithm.HS256)
+                .signWith(key(),SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -98,12 +98,12 @@ public class JwtUtils {
     }
     public String generateTokenFromUsername(String username) {
 
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(), SignatureAlgorithm.HS256)
+                .signWith(key(), SignatureAlgorithm.HS512)
                 .compact();
     }
 }
