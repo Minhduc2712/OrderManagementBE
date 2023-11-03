@@ -11,6 +11,7 @@ import com.project.Restaurant_Managementv2.models.User;
 import java.util.List;
 
 public interface UserService {
-    public User getUserById(short id);
+//    public void deleteProductById(short id);
+
 
 }

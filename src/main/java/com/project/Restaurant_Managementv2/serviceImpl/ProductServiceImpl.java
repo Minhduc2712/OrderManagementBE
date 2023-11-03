@@ -90,20 +90,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProductById(short productId) {
-        // Tìm sản phẩm cần xóa
         Optional<Product> productOptional = productRepository.findById(productId);
 
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
 
-            // Tìm danh sách các giỏ hàng có sản phẩm này
             List<Cart> cartsToUpdate = cartRepository.findByProduct(product);
 
             for (Cart cart : cartsToUpdate) {
-                cart.setProduct(null); // Cập nhật trường ProductId về null hoặc giá trị khác tùy theo yêu cầu
+                cart.setProduct(null);
             }
-
-            // Xóa sản phẩm từ bảng "Menu"
             productRepository.delete(product);
         }
     }

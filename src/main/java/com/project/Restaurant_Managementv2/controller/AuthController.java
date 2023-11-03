@@ -8,16 +8,19 @@ import java.util.stream.Collectors;
 import com.project.Restaurant_Managementv2.dto.user.SignInDto;
 import com.project.Restaurant_Managementv2.enums.Roles;
 import com.project.Restaurant_Managementv2.form.UserFormForCreating;
+import com.project.Restaurant_Managementv2.models.Cart;
 import com.project.Restaurant_Managementv2.models.ResponseObject;
 import com.project.Restaurant_Managementv2.models.Role;
 import com.project.Restaurant_Managementv2.models.User;
 import com.project.Restaurant_Managementv2.payload.request.LoginRequest;
 import com.project.Restaurant_Managementv2.payload.response.UserInfoResponse;
+import com.project.Restaurant_Managementv2.repository.CartRepository;
 import com.project.Restaurant_Managementv2.repository.RoleRepository;
 import com.project.Restaurant_Managementv2.repository.UserRepository;
 import com.project.Restaurant_Managementv2.security.jwt.CookieUtil;
 import com.project.Restaurant_Managementv2.security.jwt.JwtUtils;
 import com.project.Restaurant_Managementv2.security.services.UserDetailsImpl;
+import com.project.Restaurant_Managementv2.service.CartService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -48,6 +51,9 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    CartService cartService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -115,13 +121,19 @@ public class AuthController {
 
     @GetMapping("/user/{id}")
     public ResponseEntity<ResponseObject> getUserById(@PathVariable Short id) {
-        // Thực hiện truy vấn để lấy thông tin người dùng theo id
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        // Ở đây, bạn có thể lấy thông tin người dùng và gửi nó dưới dạng ResponseObject
         return ResponseEntity.ok(new ResponseObject("ok", "User found", user));
     }
 
+    @DeleteMapping("user/{id}")
+    public ResponseEntity<ResponseObject> deleteUserById(@PathVariable Short id){
+        User user = userRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        Short userId = user.getId();
+        List<Cart> obj= cartService.removeAllCartByUserId(userId);
+       userRepository.deleteById(userId);
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
 
+        return ResponseEntity.ok(new ResponseObject("ok","Delete User Succesfully",""));
+    }
 }
