@@ -2,6 +2,7 @@ package com.project.Restaurant_Managementv2.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,27 +64,50 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        // Check if the username exists in the database
+        Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ResponseObject("error", "Username not found", ""));
+        }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        User user = userOptional.get();
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        // Check if the provided password matches the stored password
+        if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObject("error", "Invalid password", ""));
+        }
 
-        UserInfoResponse userInfoResponse = new UserInfoResponse(jwt,jwtCookie,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new ResponseObject("ok", "Login ok", userInfoResponse));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+
+            UserInfoResponse userInfoResponse = new UserInfoResponse(jwt, jwtCookie,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles);
+
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(new ResponseObject("ok", "Login ok", userInfoResponse));
+        } catch (Exception e) {
+            // Handle the authentication exception, e.g., log it or return an error response
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObject("error", "Authentication failed", ""));
+        }
     }
+
+
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseObject> registerUser(@Valid @RequestBody UserFormForCreating signUpRequest) {
