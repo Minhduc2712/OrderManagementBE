@@ -75,7 +75,7 @@ public class AuthController {
 
         // Check if the provided password matches the stored password
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseObject("error", "Invalid password", ""));
         }
 
@@ -102,7 +102,7 @@ public class AuthController {
                     .body(new ResponseObject("ok", "Login ok", userInfoResponse));
         } catch (Exception e) {
             // Handle the authentication exception, e.g., log it or return an error response
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseObject("error", "Authentication failed", ""));
         }
     }
