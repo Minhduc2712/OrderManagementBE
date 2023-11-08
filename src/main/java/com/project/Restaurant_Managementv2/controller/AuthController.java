@@ -64,7 +64,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        // Check if the username exists in the database
         Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
 
         if (userOptional.isEmpty()) {
@@ -73,7 +72,7 @@ public class AuthController {
 
         User user = userOptional.get();
 
-        // Check if the provided password matches the stored password
+
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseObject("error", "Invalid password", ""));
@@ -101,7 +100,7 @@ public class AuthController {
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                     .body(new ResponseObject("ok", "Login ok", userInfoResponse));
         } catch (Exception e) {
-            // Handle the authentication exception, e.g., log it or return an error response
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseObject("error", "Authentication failed", ""));
         }
