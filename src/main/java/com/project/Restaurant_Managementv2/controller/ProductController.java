@@ -132,7 +132,7 @@ public class ProductController {
     }
 
     @PutMapping("product/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable(name = "id") short id, @RequestBody ProductFormForUpdating productUpdateForm) {
+    public ResponseEntity<ResponseObject> updateProduct(@PathVariable(name = "id") short id, @RequestBody ProductFormForUpdating productUpdateForm) {
         Product productUpdate = productService.updateProduct(id, productUpdateForm);
 
         ProductDto productUpdateDto = new ProductDto();
@@ -144,7 +144,8 @@ public class ProductController {
         productUpdateDto.setRate(productUpdate.getRate());
         productUpdateDto.setCategoryName(productUpdate.getCategory().getName());
 
-        return new ResponseEntity<>(productUpdateDto, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","Update product successfully",productUpdateDto));
+
     }
 
     @DeleteMapping("product/{id}")
@@ -197,17 +198,6 @@ public class ProductController {
 
         return productService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
-
-//    @GetMapping("/product/{id}")
-//    public ResponseEntity<PaginationSortingResponse> getAllProductsByCategoryId(
-//            @PathVariable Short id,
-//            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-//            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-//            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
-//            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
-//        PaginationSortingResponse response = productService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
-//        return ResponseEntity.ok(response);
-//    }
 
     @GetMapping("product/search")
     public ResponseEntity<List<Product>> searchProducts(@RequestParam("query") String query) {
